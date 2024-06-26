@@ -1,10 +1,30 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { FC, useEffect } from "react";
+import { Button } from "@rneui/themed";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { StackParamList } from "../navigation/navigation";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Root = () => {
+type RootScreenProps = NativeStackScreenProps<StackParamList, "Root">;
+
+const Root: FC<RootScreenProps> = ({ navigation }) => {
+  const userCredCheck = async () => {
+    const email = await AsyncStorage.getItem("email");
+    const password = await AsyncStorage.getItem("password");
+    if (email && password) {
+      navigation.replace("Home");
+    } else {
+      navigation.replace("Login");
+    }
+  };
+  useEffect(() => {
+    setTimeout(() => {
+      userCredCheck();
+    }, 2000);
+  }, []);
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text>Root</Text>
+      <Text>Task Management System</Text>
     </View>
   );
 };
