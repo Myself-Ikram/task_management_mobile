@@ -5,7 +5,7 @@ import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import Home from "../screens/home";
 import Task from "../screens/task";
 import Login from "../screens/login";
-import Root from "../screens/Root";
+import Root from "../screens/root";
 
 export type StackParamList = {
   Root: undefined;
