@@ -19,8 +19,9 @@ const Provider = ({ children }) => {
   const [users, setUsers] = useState<UserType[]>([]);
   const addUser = async (newUser: UserType) => {
     if (users) {
-      setUsers([...users, newUser]);
-      await AsyncStorage.setItem("users", JSON.stringify([...users, newUser]));
+      const newArray = [...users, newUser];
+      setUsers(newArray);
+      await AsyncStorage.setItem("users", JSON.stringify(newArray));
     }
   };
   const removeUser = (user: UserType) => {
