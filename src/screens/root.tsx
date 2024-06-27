@@ -23,7 +23,7 @@ const Root: FC<RootScreenProps> = ({ navigation }) => {
     onload();
     setTimeout(() => {
       userCredCheck();
-    }, 2000);
+    }, 500);
   }, []);
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

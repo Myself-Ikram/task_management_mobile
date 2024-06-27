@@ -6,24 +6,27 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC, useContext } from "react";
+import React, { FC, useContext, useEffect } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/navigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import Context from "../state_management/context";
+import { TaskType } from "../state_management/context_provider";
 
 type HomeScreenProps = NativeStackScreenProps<StackParamList, "Home">;
 
 const Home: FC<HomeScreenProps> = ({ navigation }) => {
-  const { userId, tasks, myTasks } = useContext(Context);
-  console.log(myTasks, tasks);
+  const { myTasks, getMyTask } = useContext(Context);
 
   const logout = async () => {
     await AsyncStorage.removeItem("email");
     await AsyncStorage.removeItem("password");
     navigation.replace("Root");
   };
+  useEffect(() => {
+    getMyTask();
+  }, []);
   return (
     <ImageBackground
       source={require("../../assets/bg-half.png")}
@@ -60,7 +63,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
           style={{ justifyContent: "center", alignItems: "center" }}
         >
           <Text style={{ fontSize: 70, fontWeight: "bold", color: "white" }}>
-            30
+            {myTasks?.length}
           </Text>
           <Text style={{ color: "white", fontWeight: "bold" }}>All Tasks</Text>
         </TouchableOpacity>
@@ -69,7 +72,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
           style={{ justifyContent: "center", alignItems: "center" }}
         >
           <Text style={{ fontSize: 50, fontWeight: "bold", color: "#ff7675" }}>
-            30
+            {myTasks?.filter((t: TaskType) => t?.status === "pending")?.length}
           </Text>
           <Text style={{ color: "white", fontWeight: "bold" }}>Pending</Text>
         </TouchableOpacity>
@@ -78,7 +81,10 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
           style={{ justifyContent: "center", alignItems: "center" }}
         >
           <Text style={{ fontSize: 50, fontWeight: "bold", color: "#55efc4" }}>
-            30
+            {
+              myTasks?.filter((t: TaskType) => t?.status === "completed")
+                ?.length
+            }
           </Text>
           <Text style={{ color: "white", fontWeight: "bold" }}>Completed</Text>
         </TouchableOpacity>

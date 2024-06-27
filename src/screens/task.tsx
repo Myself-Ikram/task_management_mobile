@@ -24,7 +24,13 @@ type TaskScreenProps = NativeStackScreenProps<StackParamList, "Task">;
 
 const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
   // Data
-  const { tasks, addTask } = useContext(Context);
+  const {
+    myTasks: tasks,
+    addTask,
+    changeTaskStatus,
+    editTask,
+    removeTask,
+  } = useContext(Context);
   const [myTasks, setMyTasks] = useState<TaskType[]>([]);
   const [reReq, setReReq] = useState(false);
   // Filters
@@ -37,25 +43,23 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
 
   useEffect(() => {
     (async () => {
-      const myId = await AsyncStorage.getItem("email");
       if (currentFilter === 0) {
-        setMyTasks(tasks?.filter((i: TaskType) => i?.userId === myId));
+        setMyTasks(tasks);
       } else if (currentFilter === 1) {
-        setMyTasks(
-          tasks?.filter(
-            (i: TaskType) => i?.userId === myId && i?.status === "completed"
-          )
-        );
+        setMyTasks(tasks?.filter((i: TaskType) => i?.status === "completed"));
       } else {
-        setMyTasks(
-          tasks?.filter(
-            (i: TaskType) => i?.userId === myId && i?.status === "pending"
-          )
-        );
+        setMyTasks(tasks?.filter((i: TaskType) => i?.status === "pending"));
       }
     })();
   }, [currentFilter, reReq]);
-
+  const handleCheck = (item: TaskType) => {
+    changeTaskStatus(item);
+    setReReq(!reReq);
+  };
+  const handleDelete = (item: TaskType) => {
+    removeTask(item);
+    setReReq(!reReq);
+  };
   return (
     <View style={{ flex: 1, gap: 20 }}>
       <View style={{ borderRadius: 30, overflow: "hidden" }}>
@@ -110,7 +114,7 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
             }}
           >
             {filters.map((f, idx) => (
-              <TouchableOpacity onPress={() => setCurrentFilter(idx)}>
+              <TouchableOpacity key={idx} onPress={() => setCurrentFilter(idx)}>
                 <Text
                   style={{
                     color: currentFilter === idx ? "black" : "white",
@@ -146,7 +150,7 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
               <View
                 style={{
                   backgroundColor:
-                    item?.status === "pending" ? "#ff7675" : "#ff7675",
+                    item?.status === "pending" ? "#ff7675" : "#55efc4",
                   width: 100,
                   height: 100,
                   padding: 15,
@@ -212,14 +216,18 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
                   color={"#3498db"}
                 />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => handleCheck(item)}>
                 <MaterialCIcon
-                  name="checkbox-blank-outline"
+                  name={
+                    item?.status === "completed"
+                      ? "checkbox-blank"
+                      : "checkbox-blank-outline"
+                  }
                   size={25}
                   color={"#3498db"}
                 />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => handleDelete(item)}>
                 <MaterialCIcon
                   name="delete-variant"
                   size={25}
@@ -247,6 +255,7 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
         setShowModal={setShowModal}
         modalType={modalType}
         addTask={addTask}
+        editTask={editTask}
         data={currentItem}
         reReq={reReq}
         setReReq={setReReq}
@@ -262,6 +271,7 @@ const TaskModal = ({
   setShowModal,
   modalType,
   addTask,
+  editTask,
   data,
   reReq,
   setReReq,
@@ -270,6 +280,7 @@ const TaskModal = ({
   setShowModal: (newState: boolean) => void;
   modalType: "add" | "edit";
   addTask: (item: TaskType) => void;
+  editTask: (item1: TaskType, item2: TaskType) => void;
   data?: TaskType;
   reReq: boolean;
   setReReq: (item: boolean) => void;
@@ -310,11 +321,14 @@ const TaskModal = ({
     setShowDatePicker(false);
   };
 
-  //Handle Add Task
-  const handlenewTask = () => {
+  //Handle Task
+  const handleTask = () => {
     if (modalType === "add") {
       addTask(newTask);
     } else {
+      if (data) {
+        editTask(data, newTask);
+      }
     }
     setReReq(!reReq);
     setShowModal(false);
@@ -404,7 +418,7 @@ const TaskModal = ({
             borderRadius: 20,
           }}
           disabled={inputsCheck ? false : true}
-          onPress={handlenewTask}
+          onPress={handleTask}
         >
           <Text
             style={{
