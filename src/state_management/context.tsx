@@ -8,8 +8,12 @@ const Context = createContext({
   removeTask: (item: TaskType) => {},
   users: [],
   setUsers: () => {},
+  myTasks: [],
   addUser: (item: UserType) => {},
-  removeUser: (item: UserType) => {},
+  userId: "",
+  setUserId: (item: string) => {},
+  onload: () => {},
+  eraseData: () => {},
 });
 
 export default Context;

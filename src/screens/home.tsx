@@ -16,6 +16,9 @@ import Context from "../state_management/context";
 type HomeScreenProps = NativeStackScreenProps<StackParamList, "Home">;
 
 const Home: FC<HomeScreenProps> = ({ navigation }) => {
+  const { userId, tasks, myTasks } = useContext(Context);
+  console.log(myTasks, tasks);
+
   const logout = async () => {
     await AsyncStorage.removeItem("email");
     await AsyncStorage.removeItem("password");
@@ -52,24 +55,33 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
           alignItems: "center",
         }}
       >
-        <View style={{ justifyContent: "center", alignItems: "center" }}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Task", { status: 0 })}
+          style={{ justifyContent: "center", alignItems: "center" }}
+        >
           <Text style={{ fontSize: 70, fontWeight: "bold", color: "white" }}>
             30
           </Text>
           <Text style={{ color: "white", fontWeight: "bold" }}>All Tasks</Text>
-        </View>
-        <View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Task", { status: 2 })}
+          style={{ justifyContent: "center", alignItems: "center" }}
+        >
           <Text style={{ fontSize: 50, fontWeight: "bold", color: "#ff7675" }}>
             30
           </Text>
           <Text style={{ color: "white", fontWeight: "bold" }}>Pending</Text>
-        </View>
-        <View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Task", { status: 1 })}
+          style={{ justifyContent: "center", alignItems: "center" }}
+        >
           <Text style={{ fontSize: 50, fontWeight: "bold", color: "#55efc4" }}>
             30
           </Text>
           <Text style={{ color: "white", fontWeight: "bold" }}>Completed</Text>
-        </View>
+        </TouchableOpacity>
       </View>
       {/* Cards */}
       <ScrollView>
@@ -79,8 +91,8 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
           Today's List
         </Text>
         <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
-          {[1, 1, 1, 1, 1, 1, 1, 1].map((i) => (
-            <View style={{ width: "50%", padding: 15 }}>
+          {[1, 1, 1, 1, 1, 1, 1, 1].map((item, index) => (
+            <View key={index} style={{ width: "50%", padding: 15 }}>
               <TouchableOpacity
                 style={{
                   backgroundColor: "white",
@@ -128,15 +140,6 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
           ))}
         </View>
       </ScrollView>
-      {/* <Text>Home</Text>
-          <Button
-            title="Outline"
-            type="outline"
-            onPress={() => {
-              navigation.navigate("Task");
-            }}
-          />
-          <Button title="Logout" type="outline" onPress={logout} /> */}
     </ImageBackground>
   );
 };

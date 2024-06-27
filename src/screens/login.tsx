@@ -17,17 +17,13 @@ import { UserType } from "../state_management/context_provider";
 type LoginScreenProps = NativeStackScreenProps<StackParamList, "Login">;
 
 const Login: FC<LoginScreenProps> = ({ navigation }) => {
-  const { users, addUser } = useContext(Context);
-  console.log(users);
-
+  const { users, addUser, setUserId, eraseData } = useContext(Context);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [inputCred, setInputCred] = useState({
     email: "",
     password: "",
   });
-  const multiRemove = async () => {
-    await AsyncStorage.multiRemove(["users", "tasks"]);
-  };
+
   const handleSubmit = async () => {
     if (inputCred.email === "" || inputCred.password === "") {
       Alert.alert("empty");
@@ -40,6 +36,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
       );
       if (user) {
         navigation.replace("Home");
+        setUserId(inputCred.email);
         await AsyncStorage.setItem("email", inputCred.email);
         await AsyncStorage.setItem("password", inputCred.password);
       } else {
@@ -47,6 +44,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
       }
     } else {
       addUser(inputCred);
+      setUserId(inputCred.email);
       await AsyncStorage.setItem("email", inputCred.email);
       await AsyncStorage.setItem("password", inputCred.password);
       navigation.replace("Home");
@@ -61,6 +59,17 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
         alignItems: "center",
       }}
     >
+      <Button
+        title="Reset All"
+        onPress={eraseData}
+        titleStyle={{ fontWeight: "bold", color: "black" }}
+        buttonStyle={{
+          backgroundColor: "white",
+          borderWidth: 0,
+          borderRadius: 30,
+          marginBottom: 30,
+        }}
+      />
       {/* Inputs */}
       <View
         style={{

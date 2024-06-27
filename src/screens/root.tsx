@@ -1,13 +1,15 @@
 import { StyleSheet, Text, View } from "react-native";
-import React, { FC, useEffect } from "react";
+import React, { FC, useContext, useEffect } from "react";
 import { Button } from "@rneui/themed";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/navigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Context from "../state_management/context";
 
 type RootScreenProps = NativeStackScreenProps<StackParamList, "Root">;
 
 const Root: FC<RootScreenProps> = ({ navigation }) => {
+  const { onload } = useContext(Context);
   const userCredCheck = async () => {
     const email = await AsyncStorage.getItem("email");
     const password = await AsyncStorage.getItem("password");
@@ -18,6 +20,7 @@ const Root: FC<RootScreenProps> = ({ navigation }) => {
     }
   };
   useEffect(() => {
+    onload();
     setTimeout(() => {
       userCredCheck();
     }, 2000);

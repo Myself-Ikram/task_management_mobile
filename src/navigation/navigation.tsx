@@ -11,7 +11,9 @@ export type StackParamList = {
   Root: undefined;
   Login: undefined;
   Home: undefined;
-  Task: undefined;
+  Task: {
+    status: number;
+  };
 };
 
 const Navigations = () => {
