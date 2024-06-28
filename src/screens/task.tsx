@@ -18,7 +18,6 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import Context from "../state_management/context";
 import { TaskType } from "../state_management/context_provider";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type TaskScreenProps = NativeStackScreenProps<StackParamList, "Task">;
 
@@ -34,7 +33,7 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
   const [myTasks, setMyTasks] = useState<TaskType[]>([]);
   const [reReq, setReReq] = useState(false);
   // Filters
-  const filters = ["All", "Completed", "Pending"];
+  const filters = ["All", "Pending", "Completed"];
   const [currentFilter, setCurrentFilter] = useState(route.params.status);
   // Modal
   const [showModal, setShowModal] = useState(false);
@@ -45,7 +44,7 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
     (async () => {
       if (currentFilter === 0) {
         setMyTasks(tasks);
-      } else if (currentFilter === 1) {
+      } else if (currentFilter === 2) {
         setMyTasks(tasks?.filter((i: TaskType) => i?.status === "completed"));
       } else {
         setMyTasks(tasks?.filter((i: TaskType) => i?.status === "pending"));
@@ -188,10 +187,7 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
                   <Text style={{ fontSize: 10, fontWeight: "bold" }}>
                     Description
                   </Text>
-                  <Text style={{ fontWeight: "300" }}>
-                    This is a description and does not to meant harm any one
-                    handle with care
-                  </Text>
+                  <Text style={{ fontWeight: "300" }}>{item?.desc}</Text>
                 </View>
               </View>
             </View>
@@ -381,11 +377,15 @@ const TaskModal = ({
               paddingStart: 10,
             }}
           >
-            DESCRIPTION
+            DESCRIPTION ({newTask?.desc?.length}/60)
           </Text>
           <Input
             value={newTask.desc}
-            onChangeText={(txt) => setnewTask({ ...newTask, desc: txt })}
+            onChangeText={(txt) => {
+              if (txt?.length <= 60) {
+                setnewTask({ ...newTask, desc: txt });
+              }
+            }}
           />
         </View>
         <View>

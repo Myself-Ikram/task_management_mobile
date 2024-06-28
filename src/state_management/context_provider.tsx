@@ -91,6 +91,7 @@ const Provider = ({ children }) => {
     await AsyncStorage.multiRemove(["users", "tasks"]);
     setUsers([]);
     setTasks([]);
+    setMyTasks([]);
   };
   return (
     <TaskContext.Provider
