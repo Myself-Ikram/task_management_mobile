@@ -1,12 +1,12 @@
 import {
-  FlatList,
+  Animated,
   ImageBackground,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC, useContext, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useRef, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../navigation/navigation";
 import OctiIcon from "react-native-vector-icons/Octicons";
@@ -16,13 +16,13 @@ import { Button, Input } from "@rneui/base";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
+import MaterialIcon from "react-native-vector-icons/MaterialIcons";
 import Context from "../state_management/context";
 import { TaskType } from "../state_management/context_provider";
-
 type TaskScreenProps = NativeStackScreenProps<StackParamList, "Task">;
 
 const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
-  // Data
+  // Context Data
   const {
     myTasks: tasks,
     addTask,
@@ -30,16 +30,14 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
     editTask,
     removeTask,
   } = useContext(Context);
+  // Variables
   const [myTasks, setMyTasks] = useState<TaskType[]>([]);
+  const [currentItem, setCurrentItem] = useState<TaskType>();
+  // Page reloader
   const [reReq, setReReq] = useState(false);
   // Filters
   const filters = ["All", "Pending", "Completed"];
   const [currentFilter, setCurrentFilter] = useState(route.params.status);
-  // Modal
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState<"edit" | "add">("add");
-  const [currentItem, setCurrentItem] = useState<TaskType>();
-
   useEffect(() => {
     (async () => {
       if (currentFilter === 0) {
@@ -51,14 +49,57 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
       }
     })();
   }, [currentFilter, reReq]);
-  const handleCheck = (item: TaskType) => {
-    changeTaskStatus(item);
-    setReReq(!reReq);
-  };
+
+  // Modal
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState<"edit" | "add">("add");
+
+  // Status Update
+  // const handleCheck = (item: TaskType) => {
+  //   changeTaskStatus(item);
+  //   setReReq(!reReq);
+  // };
+  // Task Delete
   const handleDelete = (item: TaskType) => {
     removeTask(item);
     setReReq(!reReq);
   };
+  // Animations
+  const filterAni = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.timing(filterAni, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+  // Scroll
+  const scrollY = new Animated.Value(0);
+  // Task Complete
+  const statusRef = useRef(new Animated.Value(0)).current;
+  const [taskAni, setTaskAni] = useState(false);
+  const handleCheck = (item: TaskType) => {
+    setCurrentItem(item);
+    if (item.status === "pending") {
+      setTaskAni(true);
+    }
+    setTimeout(
+      () => {
+        setTaskAni(false);
+        changeTaskStatus(item);
+        statusRef.setValue(0);
+        setReReq(!reReq);
+      },
+      item?.status === "pending" ? 2000 : 100
+    );
+  };
+  useEffect(() => {
+    Animated.timing(statusRef, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, [taskAni]);
   return (
     <View style={{ flex: 1, gap: 20 }}>
       <View style={{ borderRadius: 30, overflow: "hidden" }}>
@@ -70,6 +111,7 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
             gap: 15,
           }}
         >
+          {/* Header */}
           <View
             style={{
               flexDirection: "row",
@@ -78,9 +120,9 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
           >
             <TouchableOpacity
               style={{ paddingLeft: 15 }}
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.replace("Home")}
             >
-              <OctiIcon name="arrow-left" size={30} />
+              <OctiIcon name="arrow-left" size={30} color={"white"} />
             </TouchableOpacity>
             <View
               style={{
@@ -93,12 +135,14 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
                 style={{
                   fontSize: 25,
                   fontWeight: "bold",
+                  color: "white",
                 }}
               >
                 My Tasks
               </Text>
             </View>
           </View>
+          {/* Task Filter */}
           <View
             style={{
               flexDirection: "row",
@@ -113,130 +157,177 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
             }}
           >
             {filters.map((f, idx) => (
-              <TouchableOpacity key={idx} onPress={() => setCurrentFilter(idx)}>
-                <Text
-                  style={{
-                    color: currentFilter === idx ? "black" : "white",
-                    fontSize: 12,
-                    padding: 10,
-                    borderRadius: 15,
-                    backgroundColor:
-                      currentFilter === idx ? "white" : "transparent",
-                  }}
-                >
-                  {f}
-                </Text>
-              </TouchableOpacity>
+              <Animated.View key={idx} style={[{}, { opacity: filterAni }]}>
+                <TouchableOpacity onPress={() => setCurrentFilter(idx)}>
+                  <Text
+                    style={{
+                      color: currentFilter === idx ? "black" : "white",
+                      fontSize: 12,
+                      padding: 10,
+                      borderRadius: 15,
+                      backgroundColor:
+                        currentFilter === idx ? "white" : "transparent",
+                    }}
+                  >
+                    {f}
+                  </Text>
+                </TouchableOpacity>
+              </Animated.View>
             ))}
           </View>
         </ImageBackground>
       </View>
       {/* Task List */}
-      <FlatList
+      <Animated.FlatList
         data={myTasks}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        scrollEventThrottle={16}
         contentContainerStyle={{ gap: 10, padding: 10 }}
-        renderItem={({ item }: { item: TaskType }) => (
-          <View
-            style={{
-              backgroundColor: "white",
-              height: 150,
-              borderRadius: 25,
-              overflow: "hidden",
-              elevation: 5,
-            }}
-          >
-            <View style={{ flexDirection: "row" }}>
-              <View
-                style={{
-                  backgroundColor:
-                    item?.status === "pending" ? "#ff7675" : "#55efc4",
-                  width: 100,
-                  height: 100,
-                  padding: 15,
-                }}
-              >
-                <ImageBackground
-                  source={require("../../assets/calendar.png")}
+        renderItem={({ item, index }: { item: TaskType; index: number }) => {
+          const inputRange = [-1, 0, 160 * index, 160 * (index + 7)];
+          const opacity = scrollY.interpolate({
+            inputRange,
+            outputRange: [1, 1, 1, 0],
+            extrapolate: "clamp",
+          });
+          return (
+            <Animated.View
+              style={[
+                {
+                  backgroundColor: "white",
+                  height: 150,
+                  borderRadius: 25,
+                  overflow: "hidden",
+                  elevation: 5,
+                },
+                { opacity, transform: [{ scale: opacity }] },
+              ]}
+            >
+              <View style={{ flexDirection: "row" }}>
+                <View
                   style={{
-                    height: "100%",
-                    width: "100%",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
+                    backgroundColor:
+                      item?.status === "pending" ? "#ff7675" : "#55efc4",
+                    width: 100,
+                    height: 100,
+                    padding: taskAni && currentItem === item ? 0 : 15,
                   }}
                 >
-                  <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-                    {new Date(item?.due_date)?.getDate()}
-                  </Text>
-                  <Text style={{ fontSize: 12, textTransform: "uppercase" }}>
-                    {new Date(item?.due_date)
-                      ?.toLocaleString("default", {
-                        month: "long",
-                      })
-                      ?.slice(0, 3)}
-                  </Text>
-                </ImageBackground>
-              </View>
-              <View style={{ padding: 5, flex: 1 }}>
-                <View>
-                  <Text style={{ fontSize: 10, fontWeight: "bold" }}>
-                    Title
-                  </Text>
-                  <Text style={{ fontWeight: "300" }}>{item?.title}</Text>
+                  {currentItem === item && taskAni ? (
+                    <Animated.View
+                      style={[
+                        {
+                          justifyContent: "center",
+                          height: "100%",
+                          alignItems: "center",
+                          backgroundColor: "#55efc4",
+                        },
+                        { transform: [{ scale: statusRef }] },
+                      ]}
+                    >
+                      <MaterialIcon
+                        name="done-outline"
+                        size={30}
+                        color={"white"}
+                      />
+                    </Animated.View>
+                  ) : (
+                    <ImageBackground
+                      source={require("../../assets/calendar.png")}
+                      style={{
+                        height: "100%",
+                        width: "100%",
+                        justifyContent: "flex-end",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+                        {new Date(item?.due_date)?.getDate()}
+                      </Text>
+                      <Text
+                        style={{ fontSize: 12, textTransform: "uppercase" }}
+                      >
+                        {new Date(item?.due_date)
+                          ?.toLocaleString("default", {
+                            month: "long",
+                          })
+                          ?.slice(0, 3)}
+                      </Text>
+                    </ImageBackground>
+                  )}
                 </View>
-                <View>
-                  <Text style={{ fontSize: 10, fontWeight: "bold" }}>
-                    Description
-                  </Text>
-                  <Text style={{ fontWeight: "300" }}>{item?.desc}</Text>
+                <View style={{ padding: 5, flex: 1 }}>
+                  <View>
+                    <Text style={{ fontSize: 10, fontWeight: "bold" }}>
+                      Title
+                    </Text>
+                    <Text style={{ fontWeight: "300" }}>{item?.title}</Text>
+                  </View>
+                  <View>
+                    <Text style={{ fontSize: 10, fontWeight: "bold" }}>
+                      Description
+                    </Text>
+                    <Text style={{ fontWeight: "300" }}>{item?.desc}</Text>
+                  </View>
                 </View>
               </View>
-            </View>
-            <View
-              style={{
-                height: 50,
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-around",
-              }}
-            >
-              <TouchableOpacity
-                onPress={() => {
-                  setCurrentItem(item);
-                  setModalType("edit");
-                  setShowModal(true);
+              <View
+                style={{
+                  height: 50,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-around",
                 }}
               >
-                <MaterialCIcon
-                  name="notebook-edit-outline"
-                  size={25}
-                  color={"#3498db"}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleCheck(item)}>
-                <MaterialCIcon
-                  name={
-                    item?.status === "completed"
-                      ? "checkbox-blank"
-                      : "checkbox-blank-outline"
-                  }
-                  size={25}
-                  color={"#3498db"}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleDelete(item)}>
-                <MaterialCIcon
-                  name="delete-variant"
-                  size={25}
-                  color={"#ff7675"}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-        )}
+                <TouchableOpacity
+                  disabled={taskAni}
+                  onPress={() => {
+                    setCurrentItem(item);
+                    setModalType("edit");
+                    setShowModal(true);
+                  }}
+                >
+                  <MaterialCIcon
+                    name="notebook-edit-outline"
+                    size={25}
+                    color={"#3498db"}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={taskAni}
+                  onPress={() => handleCheck(item)}
+                >
+                  <MaterialCIcon
+                    name={
+                      item?.status === "completed"
+                        ? "checkbox-blank"
+                        : "checkbox-blank-outline"
+                    }
+                    size={25}
+                    color={"#3498db"}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  disabled={taskAni}
+                  onPress={() => handleDelete(item)}
+                >
+                  <MaterialCIcon
+                    name="delete-variant"
+                    size={25}
+                    color={"#ff7675"}
+                  />
+                </TouchableOpacity>
+              </View>
+            </Animated.View>
+          );
+        }}
       />
-      {/* Float btn to add task */}
+      {/* Add Task */}
       <TouchableOpacity
-        style={styles.b}
+        style={styles.floatBtn}
         onPress={() => {
           setShowModal(true);
           setCurrentItem(undefined);
@@ -281,12 +372,14 @@ const TaskModal = ({
   reReq: boolean;
   setReReq: (item: boolean) => void;
 }) => {
+  // Variable
   const [newTask, setnewTask] = useState<TaskType>({
     title: "",
     desc: "",
     due_date: new Date(),
     status: "pending",
   });
+
   useEffect(() => {
     if (modalType === "edit" && data) {
       setnewTask(data);
@@ -305,6 +398,7 @@ const TaskModal = ({
   useEffect(() => {
     setInputCheck(newTask.title === "" || newTask.desc === "" ? false : true);
   }, [newTask]);
+
   // DatePicker
   const [showDatePicker, setShowDatePicker] = useState(false);
   const onChange = (
@@ -431,6 +525,7 @@ const TaskModal = ({
             {modalType === "add" ? "Create Task" : "Update Task"}
           </Text>
         </TouchableOpacity>
+        {/* Date Picker */}
         {showDatePicker && (
           <DateTimePicker
             value={new Date(newTask.due_date)}
@@ -443,7 +538,7 @@ const TaskModal = ({
 };
 
 const styles = StyleSheet.create({
-  b: {
+  floatBtn: {
     position: "absolute",
     bottom: 75,
     right: 20,

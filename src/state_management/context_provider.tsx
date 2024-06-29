@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactDOM, ReactNode, useEffect, useState } from "react";
 import TaskContext from "./context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -14,8 +14,7 @@ export type UserType = {
   password: string;
 };
 
-// @ts-ignore
-const Provider = ({ children }) => {
+const Provider = ({ children }: { children: ReactNode }) => {
   // UserId
   const [userId, setUserId] = useState<string>();
   // User context

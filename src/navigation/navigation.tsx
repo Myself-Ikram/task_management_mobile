@@ -7,6 +7,7 @@ import Task from "../screens/task";
 import Login from "../screens/login";
 import Root from "../screens/root";
 
+// Navigations and there types
 export type StackParamList = {
   Root: undefined;
   Login: undefined;
@@ -31,5 +32,3 @@ const Navigations = () => {
 };
 
 export default Navigations;
-
-const styles = StyleSheet.create({});
