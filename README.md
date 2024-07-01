@@ -13,21 +13,22 @@ For state management, the app uses React Context API to handle the global state.
 The app is built with respThe project structure is organized to maintain a clean separation of concerns and to ensure ease of navigation and development.
 
 ### Project Structure
+
+```bash
+├── assets                               # Assets such as images, fonts, etc.
 │
-├── assets             # Assets such as images, fonts, etc.
-│
-├── src                # Reusable UI components
+├── src                                  # Reusable UI components
 |   ├── navigation         
-│   │   └── navigations.tsx # File for placing all navigation (stack)
+│   │   └── navigations.tsx              # File for placing all navigation (stack)
 │   ├── screens       
-│   │   ├── root.tsx    # Screen on app load
-│   │   └── home.tsx     # Screen for displaying dashboard on logged in
-│   │   └── login.tsx     # Screen for logging in or register
-│   │   └── task.tsx     # Personalise screen for all tasks 
+│   │   ├── root.tsx                     # Screen on app load
+│   │   └── home.tsx                     # Screen for displaying dashboard on logged in
+│   │   └── login.tsx                    # Screen for logging in or register
+│   │   └── task.tsx                     # Personalise screen for all tasks 
 │   ├── state_management         
-│   |   ├── context_provider.tsx # Data/functions provider for context
-│   |   └── context.tsx         # Context for managing user/task
-├── libs           # For future api calls
+│   |   ├── context_provider.tsx         # Data/functions provider for context
+│   |   └── context.tsx                  # Context for managing user/task
+├── libs                                 # For future api calls
 
 ## How to Clone and Start the Project
 
