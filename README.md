@@ -18,9 +18,9 @@ The app is built with respThe project structure is organized to maintain a clean
 ├── assets                               # Assets such as images, fonts, etc.
 │
 ├── src                                  # Reusable UI components
-|   ├── navigation         
-│   │   └── navigations.tsx              # File for placing all navigation (stack)
-│   ├── screens       
+    ├── navigation         
+        └── navigations.tsx              # File for placing all navigation (stack)
+    ├── screens       
 │   │   ├── root.tsx                     # Screen on app load
 │   │   └── home.tsx                     # Screen for displaying dashboard on logged in
 │   │   └── login.tsx                    # Screen for logging in or register
