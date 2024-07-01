@@ -29,7 +29,7 @@ The app is built with respThe project structure is organized to maintain a clean
 │   |   ├── context_provider.tsx         # Data/functions provider for context
 │   |   └── context.tsx                  # Context for managing user/task
 ├── libs                                 # For future api calls
-
+```
 ## How to Clone and Start the Project
 
 Follow these steps to clone the repository and start the Expo project on your local machine:
