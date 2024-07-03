@@ -1,6 +1,10 @@
 ## Screenshots
-![1720003865059](https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/87831d9a-54e6-4769-8b5f-94655803c208)
-
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/87831d9a-54e6-4769-8b5f-94655803c208">
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/641f4576-13f9-4b8c-aad3-bf270eef29dc">
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/ea83283e-6a0d-4f4d-9b84-24cd843976b2">
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/572b7ae1-accd-449b-8b01-f0b3ff227c64">
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/34b42b94-b251-4995-9178-1da9b97fc2e8">
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/b00852f3-fc6c-4502-9d56-be446d2cd198">
 
 ## Design Decisions and Project Structure
 ### Design Decisions
