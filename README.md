@@ -1,3 +1,7 @@
+## Screenshots
+![1720003865059](https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/87831d9a-54e6-4769-8b5f-94655803c208)
+
+
 ## Design Decisions and Project Structure
 ### Design Decisions
 1.Priortize User Interface:
