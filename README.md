@@ -1,3 +1,47 @@
+### APK
+https://expo.dev/artifacts/eas/yPbfsCFmefNo3wwijJXwm.apk
+
+## Screenshots
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/87831d9a-54e6-4769-8b5f-94655803c208">
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/641f4576-13f9-4b8c-aad3-bf270eef29dc">
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/ea83283e-6a0d-4f4d-9b84-24cd843976b2">
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/572b7ae1-accd-449b-8b01-f0b3ff227c64">
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/34b42b94-b251-4995-9178-1da9b97fc2e8">
+<img width="197" alt="image" src="https://github.com/Myself-Ikram/task_management_mobile/assets/97652328/b00852f3-fc6c-4502-9d56-be446d2cd198">
+
+## Design Decisions and Project Structure
+### Design Decisions
+1.Priortize User Interface:
+The primary focus of the app is to provide a clean, intuitive, and user-friendly interface. This ensures that users can quickly add, manage, and complete tasks without any confusion or clutter.
+
+2.File Sturture:
+The app is designed with a modular architecture to ensure scalability and maintainability. Each feature or functionality is encapsulated in its own module, making it easier to manage and extend the app in the future.
+
+3.State Management:
+For state management, the app uses React Context API to handle the global state. This allows for a more predictable and centralized state management system, making it easier to manage the app's state and debug any issues.
+
+4.Responsive Design:
+The app is built with respThe project structure is organized to maintain a clean separation of concerns and to ensure ease of navigation and development.
+
+### Project Structure
+
+```bash
+├── assets                               # Assets such as images, fonts, etc.
+
+├── src                                  # Reusable UI components
+    ├── navigation         
+        └── navigations.tsx              # File for placing all navigation (stack)
+    ├── screens       
+        ├── root.tsx                     # Screen on app load
+        └── home.tsx                     # Screen for displaying dashboard on logged in
+        └── login.tsx                    # Screen for logging in or register
+        └── task.tsx                     # Personalise screen for all tasks 
+    ├── state_management         
+        ├── context_provider.tsx         # Data/functions provider for context
+        └── context.tsx                  # Context for managing user/task
+
+├── libs                                 # For future api calls
+```
 ## How to Clone and Start the Project
 
 Follow these steps to clone the repository and start the Expo project on your local machine:
@@ -92,7 +136,3 @@ Before you begin, ensure you have the following installed:
   ```
 
 By following these instructions, you should be able to successfully clone and start the Expo project on your local machine.
-
----
-
-Feel free to customize the above instructions based on the specific requirements and setup of your project!
