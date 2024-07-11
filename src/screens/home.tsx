@@ -137,7 +137,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
   return (
     <ImageBackground
       source={require("../../assets/bg-half.png")}
-      style={{ flex: 1, paddingTop: 75, padding: 10, gap: 10 }}
+      style={{ flex: 1, paddingTop: 40, padding: 10, gap: 10 }}
     >
       {/* Basic Intro */}
       <Animated.View>

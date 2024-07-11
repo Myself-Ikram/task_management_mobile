@@ -54,11 +54,6 @@ const Task: FC<TaskScreenProps> = ({ navigation, route }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState<"edit" | "add">("add");
 
-  // Status Update
-  // const handleCheck = (item: TaskType) => {
-  //   changeTaskStatus(item);
-  //   setReReq(!reReq);
-  // };
   // Task Delete
   const handleDelete = (item: TaskType) => {
     removeTask(item);

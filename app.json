@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "TaskManagementMobile",
+    "name": "My Tasks",
     "slug": "TaskManagementMobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/task-bg.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -18,10 +18,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.myself_ikram.TaskManagementMobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "a6551cf0-eb7a-4543-b02f-f12fd4d53348"
+      }
     }
   }
 }
